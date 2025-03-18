@@ -13,7 +13,7 @@
 #
 
 # Global vars
-$backup_folder= Join-Path -Path $PSScriptRoot -ChildPath ".DotfileBackup"
+$backup_folder = Join-Path -Path $PSScriptRoot -ChildPath ".DotfileBackup"
 $ERROR_LOG = Join-Path -Path $PSScriptRoot -ChildPath "InstallerERROR.log"
 
 # 获取当前脚本所在的目录路径（规范化处理）
@@ -65,7 +65,6 @@ function logo {
     $logoArt = @" 
     $BLD${CRE}[ $CYE$Text $CRE]$CNC
 "@
-
     Write-Host $logoArt
 }
 
@@ -146,7 +145,7 @@ function initial_checks {
 
     $TargetDrive = "O:"
     if (-not (Test-Path $TargetDrive)) {
-        Write-Host "目标分区 $TargetDrive 不存在！" -ForegroundColor Red
+        Write-Host "软件分区 $TargetDrive 不存在！" -ForegroundColor Red
         exit 1
     }
 
@@ -155,12 +154,11 @@ function initial_checks {
 
 function add_env {
     
-    $envVariables  = @(
-        @{ name="GLAZEWM_CONFIG_PATH";value = "C:\Users\molin\.config\glazewm\glazewm.yaml";scope = "Machine"}
-        @{ name="YAZI_CONFIG_HOME";value = "C:\Users\molin\.config\yazi";scope = "Machine"}
-        @{ name="ChocolateyInstall";value = "O:\admin\app-managers\chocolatey";scope = "Machine"}
-        @{ name="ChocolateyToolsLocation";value = "O:\admin\app-managers\chocolatey\tools";scope = "Machine"}
-    
+    $envVariables = @(
+        @{ name = "GLAZEWM_CONFIG_PATH"; value = "C:\Users\molin\.config\glazewm\glazewm.yaml"; scope = "Machine" }
+        @{ name = "YAZI_CONFIG_HOME"; value = "C:\Users\molin\.config\yazi"; scope = "Machine" }
+        @{ name = "ChocolateyInstall"; value = "O:\admin\app-managers\chocolatey"; scope = "Machine" }
+        @{ name = "ChocolateyToolsLocation"; value = "O:\admin\app-managers\chocolatey\tools"; scope = "Machine" }
     )
     
     foreach ($var in $envVariables) {
@@ -168,61 +166,105 @@ function add_env {
             $targetScope = [System.EnvironmentVariableTarget]::$($var.Scope)
     
             [System.Environment]::SetEnvironmentVariable($var.name, $var.value, $targetScope)
-            Write-Host "已设置 [$($var.scope)] 环境变量: $($var.name)=$($var.value)"
+            Write-Host "Set [$($var.scope)] env variable succeed: $($var.name)=$($var.value)"
         }
         catch {
-            Write-Error "设置环境变量失败: $_"
+            Write-Error "Failed to set env variables: $_"
         }
     }
+    Write-Host “Please restart Shell"
     
 }
 
 function add_dependices {
 
+    $soft_disk = "O:"
+    $utilities = Join-Path -Path $soft_disk -ChildPath "utilities"
+    $desktop = Join-Path -Path $soft_disk -ChildPath "desktop"
+    $coding = Join-Path -Path $soft_disk -ChildPath "coding"
+    $doc = Join-Path -Path $soft_disk -ChildPath "documents"
+    $admin = Join-Path -Path $soft_disk -ChildPath "admin"
+    $net = Join-Path -Path $soft_disk -ChildPath "internet"
+    $multimedia = Join-Path -Path $soft_disk -ChildPath "multimedia"
+
     $dependices = @(
-    # @{ name = "jetbrainsmono-nerd-fonts"; id = "DEVCOM.JetBrainsMonoNerdFont"; append = "-eh" },
-    @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm";  silent = $false; scope = "machine"}
-    @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$multimedia\suites\ffmpeg"; silent = $false; scope = "machine"}
-
-)
-
-    
-
-
-    foreach ($app in $dependices) {
-        $CheckCommand = "winget list --id $($app.id) "
-        $IsInstalled = Invoke-Expression $CheckCommand -ErrorAction SilentlyContinue
+        # @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$soft_disk\multmedia\suites\ffmpeg"; silent = $false; scope = "machine"}
+        @{ name = "yasb"; id = "AmN.yasb"; silent = $true; }
+        @{ name = "nvim"; id = "Neovim.Neovim"; location = "$documents\editors\neovim"; silent = $false; scope = "machine" }
+        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; silent = $false; scope = "machine" }
+        @{ name = "jetbrainsMonoNerdFonts"; id = "DEVCOM.JetBrainsMonoNerdFont"; silent = $false; scope = "machine" }
+        @{ name = "flameshot"; id = "Flameshot.Flameshot"; location = "$utilities\ime\flameshot"; append = "-h --scope machine " }
+    )
+    # Detet missing packages
+    $missing_pkgs = New-Object System.Collections.ArrayList
+    foreach ($pkg in $dependices) {
+        try {
+            winget list -e --id $($pkg.id) | Out-Null
         
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "[$($app.name)] 已安装" -ForegroundColor Yellow
-            continue
-        }
-        Write-Host "[$($app.name)] 未安装" -ForegroundColor Red
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "[√] [$($pkg.name)] already install" -ForegroundColor Yellow
+                continue
+            }
+            else {
+                $missing_pkgs += $Software
+                Write-Host "[×] [$($pkg.name)] not install" -ForegroundColor Red
+            }
 
-        # 构建安装命令
-        $Arguments = @(
-            "winget install",
-            "-e",
-            "--id", $app.id
-        )
-
-        if ($app.silent) { 
-            $Arguments += "--silent" 
-        }else {
-            $Arguments += "--interactive"
-        }
-        if ($app.location) { $Arguments += @("--location", "`"$($app.location)`"") }
-        if ($app.scope) { $Arguments +=@("--scope", "$($app.scope)") }
-
-        Write-Host $Arguments
         
-        # $installCmd = "winget install --id $($app.id) -l '$($app.location)' $($app.append)"
-
-        # Write-Host $installCmd
-        # Invoke-Expression $installCmd
+        }
+        catch {
+            $errormsg = "Detece $($pkg.DisplayName) error: $_"
+            Write-Host  $errormsg -ForegroundColor Red
+            logo_error $errormsg
+            $missing_pkgs += $pkg
+        }
+        
     }
+
+    if ($missing_pkgs.Count -gt 0) {
+        try {
+            Write-Host "${BLD}${CYE}Installing $missing_pkgs ${CNC}"
+            foreach ($mis in $missing_pkgs) {
+                Write-Host $mis
+            }
+            $failed_install = @()
+            foreach ($pkg in $missing_pkgs) {
+                $install_cmd = @(
+                    "install",
+                    "-e",
+                    "--id", $pkg.id
+                )
+    
+                if ($pkg.silent) { 
+                    $install_cmd += "--silent" 
+                }
+                else {
+                    $install_cmd += "--interactive"
+                }
+                if ($pkg.location) { $install_cmd += @("--location", "`"$($pkg.location)`"") }
+                if ($pkg.scope) { $install_cmd += @("--scope", "$($pkg.scope)") }
+    
+                Write-Host $install_cmd
+            
+                Write-Host "Installing [$($pkg.name)]" -ForegroundColor Cyan
+                # winget $install_cmd
+                # if ($LASTEXITCODE -ne 0) {
+                #     $failed_install += $pkg
+                #     logo_error -Message "$($pkg.name) install failed"
+                # }
+            }
+        }
+        catch {
+            logo_error -Message "$($pkg.name) install failed,error message: $($_.Exception.Message)"
+        }
+    }
+
+
+
 }
+
 
 # initial_checks
 # welcome
+# add_env
 add_dependices
