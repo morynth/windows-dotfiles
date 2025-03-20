@@ -188,15 +188,16 @@ function add_dependices {
     $multimedia = Join-Path -Path $soft_disk -ChildPath "multimedia"
 
     $dependices = @(
-        # @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$soft_disk\multmedia\suites\ffmpeg"; silent = $false; scope = "machine"}
-        @{ name = "yasb"; id = "AmN.yasb"; silent = $true; }
-        @{ name = "nvim"; id = "Neovim.Neovim"; location = "$documents\editors\neovim"; silent = $false; scope = "machine" }
-        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; silent = $false; scope = "machine" }
-        @{ name = "jetbrainsMonoNerdFonts"; id = "DEVCOM.JetBrainsMonoNerdFont"; silent = $false; scope = "machine" }
-        @{ name = "flameshot"; id = "Flameshot.Flameshot"; location = "$utilities\ime\flameshot"; append = "-h --scope machine " }
-    )
+        @{ name = "yasb"; id = "AmN.yasb"; scope = "user"}
+        @{ name = "nvim"; id = "Neovim.Neovim"; location = "$doc\editors\neovim"; interactive = $true;}
+        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm";}
+        @{ name = "jetbrainsMonoNerdFonts"; id = "DEVCOM.JetBrainsMonoNerdFont";}
+        @{ name = "flameshot"; id = "Flameshot.Flameshot"; location = "$utilities\ime\flameshot"; interactive = $true;}
+        @{ name = "gnuPG"; id = "GnuPG.GnuPG";}
+        
+        )
     # Detet missing packages
-    $missing_pkgs = New-Object System.Collections.ArrayList
+    $missing_pkgs = @()
     foreach ($pkg in $dependices) {
         try {
             winget list -e --id $($pkg.id) | Out-Null
@@ -206,7 +207,7 @@ function add_dependices {
                 continue
             }
             else {
-                $missing_pkgs += $Software
+                $missing_pkgs += $pkg
                 Write-Host "[×] [$($pkg.name)] not install" -ForegroundColor Red
             }
 
@@ -221,50 +222,62 @@ function add_dependices {
         
     }
 
+    # Batch installation
     if ($missing_pkgs.Count -gt 0) {
-        try {
-            Write-Host "${BLD}${CYE}Installing $missing_pkgs ${CNC}"
-            foreach ($mis in $missing_pkgs) {
-                Write-Host $mis
-            }
+            Write-Host "${BLD}${CYE}Installing $($missing_pkgs.Count) missing packages...${CNC}"
             $failed_install = @()
             foreach ($pkg in $missing_pkgs) {
-                $install_cmd = @(
-                    "install",
-                    "-e",
-                    "--id", $pkg.id
-                )
+                try {
+                $install_cmd = "winget install -e --id $($pkg.id)"
     
-                if ($pkg.silent) { 
-                    $install_cmd += "--silent" 
+                if ($pkg.interactive) { 
+                    $install_cmd += " -i"
                 }
                 else {
-                    $install_cmd += "--interactive"
+                    # 默认静默安装
+                    $install_cmd += " -h"
                 }
-                if ($pkg.location) { $install_cmd += @("--location", "`"$($pkg.location)`"") }
-                if ($pkg.scope) { $install_cmd += @("--scope", "$($pkg.scope)") }
+                if ($pkg.location) { $install_cmd += @(" -l", "`"$($pkg.location)`"") }
+
+                if ($pkg.scope) { 
+                    $install_cmd += @(" --scope", "$($pkg.scope)") 
+                } else {
+                    # 默认全局安装
+                    $install_cmd += @(" --scope", "machine") 
+                }
     
                 Write-Host $install_cmd
             
                 Write-Host "Installing [$($pkg.name)]" -ForegroundColor Cyan
                 # winget $install_cmd
+                Invoke-Expression $install_cmd
                 # if ($LASTEXITCODE -ne 0) {
                 #     $failed_install += $pkg
                 #     logo_error -Message "$($pkg.name) install failed"
                 # }
             }
+            catch {
+                $failed_install += $pkg
+                logo_error -Message "$($pkg.name) install failed,error message: $($_.Exception.Message)"
+            }
+
         }
-        catch {
-            logo_error -Message "$($pkg.name) install failed,error message: $($_.Exception.Message)"
-        }
+
+ 
     }
 
 
 
 }
 
+function Test {
+    winget source remove winget
+    winget source add winget https://mirrors.ustc.edu.cn/winget-source --trust-level trusted
+    
+}
 
 # initial_checks
 # welcome
 # add_env
 add_dependices
+# Test
