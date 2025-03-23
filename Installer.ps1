@@ -72,17 +72,13 @@ function welcome {
     Clear-Host
     logo "welcome $env:USERNAME"
     Write-Host "This script will install my dotfiles and this is what it will do:
-        [i] 2 repositories will be installed. gh0stzk-dotfiles and Chaotic-Aur
         [i] Check necessary dependencies and install them
         [i] Download my dotfiles in ${HOME}/dotfiles
-        [i] Backup of possible existing configurations (bspwm, polybar, etc...)
+        [i] Backup of possible existing configurations (glazewm, yasb, PowerShell_profile...)
         [i] Install my configuration
-        [i] Enabling MPD service (Music player daemon)
-        [i] Change your shell to zsh shell
+        [i] Create shortcut (startup)
 
         [!] My dotfiles DO NOT modify any of your system configurations
-        [!] This script does NOT have the potential power to break your system
-
     " 
 
     while ($true) {
@@ -172,39 +168,42 @@ function install_dependencies {
     $dependices = @(
 
         # ok
-        # @{ name = "yasb"; id = "AmN.yasb"; location = "$desktop\yasb"; scope = "none"}
-        # @{ name = "Espanso"; id = "Espanso.Espanso"; location = "$util\suites\espanso"; scope = "user"}
-        # @{ name = "qBittorrent-Enhanced-Edition"; id = "c0re100.qBittorrent-Enhanced-Edition"; custom = "/D=$net\file-sharing\qbittorrent";}
-        # @{ name = "JetBrainsMonoNerdFont"; id = "DEVCOM.JetBrainsMonoNerdFont"; scope = "user"}
-        
-        # @{ name = "7zip"; id = "7zip.7zip"; location = "$util\file\7zip";}
-        # @{ name = "winrar"; id = "RARLab.WinRAR"; location = "$util\file\winrar";}
-        # @{ name = "VSCodium"; id = "VSCodium.VSCodium"; location = "$doc\editors\vscodium";}
-        # @{ name = "firefox"; id = "Mozilla.Firefox"; location = "$net\browsers\firefox";}
-        # @{ name = "zeal"; id = "OlegShparber.Zeal"; custom = "INSTALL_ROOT=$coding\doc\zeal";}
-        # @{ name = "Flameshot"; id = "Flameshot.Flameshot"; custom = "INSTALL_ROOT=$util\ime\flameshot"; }
-
-        # @{ name = "Neovim"; id = "Neovim.Neovim"; custom = "INSTALL_ROOT=$doc\editors\neovim"}
-        # @{ name = "Gpg4win"; id = "GnuPG.Gpg4win"; location = "O:\secu\gpg4win"}
-        # @{ name = "Keepassxc"; id = "KeePassXCTeam.KeePassXC"; custom = "INSTALL_ROOT=$secu\passwd\keepassxc";}
-        # @{ name = "crystalDiskInfo"; id = "CrystalDewWorld.CrystalDiskInfo.AoiEdition"; location = "$admin\disk\crystal-disk-info"; }
-        # @{ name = "drawio"; id = "JGraph.Draw"; location = "$doc\editors\drwaio"; }
-        # @{ name = "fluent-reader"; id = "yang991178.fluent-reader"; location = "$doc\office\fluent-reader";}
-        # @{ name = "obsidian"; id = "Obsidian.Obsidian"; location = "$doc\editors\obsidian";}
-        # @{ name = "thunderbird"; id = "Mozilla.Thunderbird.zh-CN"; location = "$net\comm\thunderbird"; }
-        # @{ name = "calibre"; id = "calibre.calibre"; location = "$doc\ebooks\calibre"; }
-        # @{ name = "picard"; id = "MusicBrainz.Picard"; location = "$media\audio\picard"; }
-        # @{ name = "obs-studio"; id = "OBSProject.OBSStudio"; location = "$media\video\obs-studio"; }
-        # @{ name = "yac-reader"; id = "YACReader.YACReader"; location = "$media\graphics\yac-reader"; }
-        # @{ name = "digiKam"; id = "KDE.digiKam"; location = "$media\graphics\digikam"; }
-        # @{ name = "ImageMagick"; id = "ImageMagick.ImageMagick"; location = "$media\graphics\image-magick"; }
-        # @{ name = "Steam"; id = "Valve.Steam"; custom = "/D=$game\platforms\steam"; }
-        # @{ name = "Playnite"; id = "Playnite.Playnite"; location = "$game\manager\playnite"; scope = "user"}
-        # @{  name = "android-studio";
-        #     id = "Google.AndroidStudio";
-        #     custom = """/S /LOG=$coding\ides\android-studio\install.log /CONFIG=$HOME\dotfiles\misc\jetbrains\silent.config /D=$coding\ides\android-studio"""
-        #     install_mode = "n"
-        # }
+        @{ name = "yasb"; id = "AmN.yasb"; location = "$desktop\yasb"; scope = "none"}
+        @{ name = "Espanso"; id = "Espanso.Espanso"; location = "$util\suites\espanso"; scope = "user"}
+        @{ name = "qBittorrent-Enhanced-Edition"; id = "c0re100.qBittorrent-Enhanced-Edition"; custom = "/D=$net\file-sharing\qbittorrent";}
+        @{ name = "JetBrainsMonoNerdFont"; id = "DEVCOM.JetBrainsMonoNerdFont"; scope = "user"}
+        @{ name = "7zip"; id = "7zip.7zip"; location = "$util\file\7zip";}
+        @{ name = "winrar"; id = "RARLab.WinRAR"; location = "$util\file\winrar";}
+        @{ name = "VSCodium"; id = "VSCodium.VSCodium"; location = "$doc\editors\vscodium";}
+        @{ name = "firefox"; id = "Mozilla.Firefox"; location = "$net\browsers\firefox";}
+        @{ name = "zeal"; id = "OlegShparber.Zeal"; custom = "INSTALL_ROOT=$coding\doc\zeal";}
+        @{ name = "Flameshot"; id = "Flameshot.Flameshot"; custom = "INSTALL_ROOT=$util\ime\flameshot"; }
+        @{ name = "cpu-z"; id = "CPUID.CPU-Z"; location = "$admin\profilers\cpu-z"}
+        @{ name = "gimp"; id = "GIMP.GIMP"; location = "$media\graphics\gimp"}
+        @{ name = "sigil"; id = "Sigil-Ebook.Sigil"; location = "$docs\ebooks\sigil"}
+        @{ name = "texstudio"; id = "TeXstudio.TeXstudio"; location = "$docs\editors\texstudio"}
+        @{ name = "git"; id = "Microsoft.Git"; location = "$coding\vcs\git"; custom = "/COMPONENTS=gitlfs,assoc,assoc_sh,windowsterminal,scalar"}
+        @{ name = "Neovim"; id = "Neovim.Neovim"; custom = "INSTALL_ROOT=$doc\editors\neovim"}
+        @{ name = "Gpg4win"; id = "GnuPG.Gpg4win"; location = "O:\secu\gpg4win"}
+        @{ name = "Keepassxc"; id = "KeePassXCTeam.KeePassXC"; custom = "INSTALL_ROOT=$secu\passwd\keepassxc";}
+        @{ name = "crystalDiskInfo"; id = "CrystalDewWorld.CrystalDiskInfo.AoiEdition"; location = "$admin\disk\crystal-disk-info"; }
+        @{ name = "drawio"; id = "JGraph.Draw"; location = "$doc\editors\drwaio"; }
+        @{ name = "fluent-reader"; id = "yang991178.fluent-reader"; location = "$doc\office\fluent-reader";}
+        @{ name = "obsidian"; id = "Obsidian.Obsidian"; location = "$doc\editors\obsidian";}
+        @{ name = "thunderbird"; id = "Mozilla.Thunderbird.zh-CN"; location = "$net\comm\thunderbird"; }
+        @{ name = "calibre"; id = "calibre.calibre"; location = "$doc\ebooks\calibre"; }
+        @{ name = "picard"; id = "MusicBrainz.Picard"; location = "$media\audio\picard"; }
+        @{ name = "obs-studio"; id = "OBSProject.OBSStudio"; location = "$media\video\obs-studio"; }
+        @{ name = "yac-reader"; id = "YACReader.YACReader"; location = "$media\graphics\yac-reader"; }
+        @{ name = "digiKam"; id = "KDE.digiKam"; location = "$media\graphics\digikam"; }
+        @{ name = "ImageMagick"; id = "ImageMagick.ImageMagick"; location = "$media\graphics\image-magick"; }
+        @{ name = "Steam"; id = "Valve.Steam"; custom = "/D=$game\platforms\steam"; }
+        @{ name = "Playnite"; id = "Playnite.Playnite"; location = "$game\manager\playnite"; scope = "user"}
+        @{  name = "android-studio";
+            id = "Google.AndroidStudio";
+            custom = """/S /LOG=$coding\ides\android-studio\install.log /CONFIG=$HOME\dotfiles\misc\jetbrains\silent.config /D=$coding\ides\android-studio"""
+            install_mode = "n"
+        }
         @{  name         = "idea-ic";
             id           = "JetBrains.IntelliJIDEA.Community";
             custom       = """/S /LOG=$coding\ides\idea-ic\install.log /CONFIG=$HOME\dotfiles\misc\jetbrains\silent.config /D=$coding\ides\idea-ic"""; 
@@ -216,29 +215,27 @@ function install_dependencies {
             install_mode = "n"
         }
 
-
         # not perfect,need interactive
-        # @{ name = "NVM"; id = "CoreyButler.NVMforWindows"; location = "$coding\vcs\nvm"; scope = "user"; install_mode = "i";}
-        # @{ name = "KDEConnect"; id = "KDE.KDEConnect"; custom = "/D=$net\file-sharing\sync\kde-connect"; install_mode = "i";}
-        # @{ name = "WindowsSDK"; id = "Microsoft.WindowsSDK.10.0.18362"; install_mode = "i";}
-        # @{ name = "Weasel"; id = "Rime.Weasel"; custom = "INSTALL_ROOT=$util\ime\weasel"; install_mode = "i";}
-        # @{ name = "PowerShell"; id = "Microsoft.PowerShell"; custom = "TARGETDIR=$util\shells\pwsh"; install_mode = "i";}
-        # @{ name = "Powertoys"; id = "Microsoft.PowerToys"; custom = "TARGETDIR=$util\suites\powertoys";}
-        # @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; install_mode = "i";}
-        # @{ name = "qq"; id = "Tencent.QQ.NT"; location = "$net\comm\qq"; install_mode = "i";}
-        # @{ name = "wechat"; id = "Tencent.WeChat"; location = "$net\comm\wechat"; install_mode = "i";}
-        # @{ name = "potplayer"; id = "Daum.PotPlayer"; custom = "/D=$media\video\potplayer"; install_mode = "i";}
-        # @{ name = "python"; id = "Python.Python.3.12"; location = "$coding\sdks\python"; install_mode = "i";}
-        # @{ name = "deployment-toolkit"; id = "Microsoft.DeploymentToolkit"; custom = "TARGETDIR=$coding\builds\windows-deploy-toolkit"; install_mode = "i";}
-
+        @{ name = "NVM"; id = "CoreyButler.NVMforWindows"; location = "$coding\vcs\nvm"; scope = "user"; install_mode = "i";}
+        @{ name = "KDEConnect"; id = "KDE.KDEConnect"; custom = "/D=$net\file-sharing\sync\kde-connect"; install_mode = "i";}
+        @{ name = "WindowsSDK"; id = "Microsoft.WindowsSDK.10.0.18362"; install_mode = "i";}
+        @{ name = "Weasel"; id = "Rime.Weasel"; custom = "INSTALL_ROOT=$util\ime\weasel"; install_mode = "i";}
+        @{ name = "PowerShell"; id = "Microsoft.PowerShell"; custom = "TARGETDIR=$util\shells\pwsh"; install_mode = "i";}
+        @{ name = "Powertoys"; id = "Microsoft.PowerToys"; custom = "TARGETDIR=$util\suites\powertoys";}
+        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; install_mode = "i";}
+        @{ name = "qq"; id = "Tencent.QQ.NT"; location = "$net\comm\qq"; install_mode = "i";}
+        @{ name = "wechat"; id = "Tencent.WeChat"; location = "$net\comm\wechat"; install_mode = "i";}
+        @{ name = "potplayer"; id = "Daum.PotPlayer"; custom = "/D=$media\video\potplayer"; install_mode = "i";}
+        @{ name = "python"; id = "Python.Python.3.12"; location = "$coding\sdks\python"; install_mode = "i";}
+        @{ name = "deployment-toolkit"; id = "Microsoft.DeploymentToolkit"; custom = "TARGETDIR=$coding\builds\windows-deploy-toolkit"; install_mode = "i";}
         
         # not support 'install location'
-        # @{ name = "ungoogled-chromium"; id = "eloston.ungoogled-chromium";}
-        # @{ name = "Dotnet8"; id = "Microsoft.DotNet.SDK.8"; scope = "none"}
-        # @{ name = "Autohotkey"; id = "AutoHotkey.AutoHotkey";}
-        # @{ name = "OhMyPosh"; id = "JanDeDobbeleer.OhMyPosh";}
-        # @{ name = "WindowsTerminal"; id = "Microsoft.WindowsTerminal";}
-        # @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$media\graphics\ffmpeg";}
+        @{ name = "ungoogled-chromium"; id = "eloston.ungoogled-chromium";}
+        @{ name = "Dotnet8"; id = "Microsoft.DotNet.SDK.8"; scope = "none"}
+        @{ name = "Autohotkey"; id = "AutoHotkey.AutoHotkey";}
+        @{ name = "OhMyPosh"; id = "JanDeDobbeleer.OhMyPosh";}
+        @{ name = "WindowsTerminal"; id = "Microsoft.WindowsTerminal";}
+        @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$media\graphics\ffmpeg";}
         
         # optional if you uninstall edge,maybe need install Microsoft.EdgeWebView2Runtime
 
@@ -287,7 +284,8 @@ function install_dependencies {
                 $wingetArgs = @(
                     "install",
                     "-e",
-                    "--id", $pkg.id
+                    "--id", $pkg.id,
+                    "--accept-package-agreements"
                 )
 
                 if ($pkg.install_mode) { 
