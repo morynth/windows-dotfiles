@@ -15,27 +15,14 @@
 # Global vars
 $ERROR_LOG = Join-Path -Path $HOME -ChildPath "InstallError.log"
 $backup_folder = Join-Path -Path $HOME -ChildPath "DotBackup"
-# 获取当前脚本所在的目录路径（规范化处理）
+
 $scriptPath = $PSScriptRoot
 $global:try_firefox = $null
 
 $pwsh_profile = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
 $windows_powershell_profile = "$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+$profiles_dir = "$env:APPDATA\Mozilla\Firefox\Profiles"
 
-# function instal_winget {
-
-#     Clear-Host
-#     logo "Add molin custom repo"
-#     $repo_name="molin-dotfiles"
-#     Start-Sleep 2
-
-#     # Check if the repository already exists
-#     Write-Host "Installing ${repo_name} repository..."
-#     if (condition) {
-#         <# Action to perform if the condition is true #>
-#     }
-    
-# }
 
 function switch_ustc_mirrors {
 
@@ -44,10 +31,8 @@ function switch_ustc_mirrors {
     
 }
 
-# Logo 显示函数
 function logo {
     
-    # [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logEntry = "[$timestamp] : $args"
 
@@ -55,15 +40,12 @@ function logo {
     Write-Host $args -ForegroundColor Yellow
 }
 
-# 错误日志处理函数
 function logo_error {
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logEntry = "[$timestamp] ERROR: $args"
 
-    # 写入日志文件
     $logEntry | Out-File $ERROR_LOG -Encoding utf8 -Append
 
-    # 控制台彩色输出
     Write-Host "ERROR: $args" -ForegroundColor Red
 }
 
@@ -72,8 +54,8 @@ function welcome {
     Clear-Host
     logo "welcome $env:USERNAME"
     Write-Host "This script will install my dotfiles and this is what it will do:
-        [i] Check necessary dependencies and install them
-        [i] Download my dotfiles in ${HOME}/dotfiles
+        [i] Check necessary dependencies and install themes
+        [i] Download my dotfiles in ${HOME}\dotfiles
         [i] Backup of possible existing configurations (glazewm, yasb, PowerShell_profile...)
         [i] Install my configuration
         [i] Create shortcut (startup)
@@ -91,7 +73,7 @@ function welcome {
             }
             '^(n|no)?$' {
                 Write-Host "Operation cancelled" -ForegroundColor Yellow
-                exit 1  # 退出脚本
+                exit 1
             }
             default {
                 Write-Host "Error: Just write 'y' or 'n'" -ForegroundColor Yellow
@@ -104,7 +86,7 @@ function welcome {
 function initial_checks {
 
     if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        Write-Warning "The script must be executed for admin"
+        Write-Warning "The script must be executed for admin."
         exit 1
     }
 
@@ -120,10 +102,14 @@ function initial_checks {
 
     $TargetDrive = "O:"
     if (-not (Test-Path $TargetDrive)) {
-        Write-Host "Software Disk $TargetDrive not found" -ForegroundColor Red
+        Write-Host "Software Disk $TargetDrive not found." -ForegroundColor Red
         exit 1
     }
 
+    if (-not (Test-Path "$HOME\silent.config")) {
+        Write-Host "This script needs to download slient.config to the home directory." -ForegroundColor Red
+        exit 1
+    }
 
 }
 
@@ -155,89 +141,88 @@ function install_dependencies {
     Start-Sleep 2
 
     $soft_disk = "O:"
-    $util = Join-Path -Path $soft_disk -ChildPath "utils"
+    $utils = Join-Path -Path $soft_disk -ChildPath "utils"
     $desktop = Join-Path -Path $soft_disk -ChildPath "desktop"
     $coding = Join-Path -Path $soft_disk -ChildPath "coding"
-    $doc = Join-Path -Path $soft_disk -ChildPath "docs"
+    $docs = Join-Path -Path $soft_disk -ChildPath "docs"
     $admin = Join-Path -Path $soft_disk -ChildPath "admin"
     $net = Join-Path -Path $soft_disk -ChildPath "net"
     $media = Join-Path -Path $soft_disk -ChildPath "media"
     $secu = Join-Path -Path $soft_disk -ChildPath "secu"
-    $game = Join-Path -Path $soft_disk -ChildPath "games"
+    $games = Join-Path -Path $soft_disk -ChildPath "games"
     # "TARGETDIR" "INSTALL_ROOT" "DESTINATION" "INSTALLDIR" "APPLICATIONFOLDE" "INSTALLLOCATION"
     $dependices = @(
 
         # ok
         @{ name = "yasb"; id = "AmN.yasb"; location = "$desktop\yasb"; scope = "none"}
-        @{ name = "Espanso"; id = "Espanso.Espanso"; location = "$util\suites\espanso"; scope = "user"}
+        @{ name = "Flow-Launcher"; id = "Flow-Launcher.Flow-Launcher"; scope = "none"}
+        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; install_mode = "i";}
+        @{ name = "Espanso"; id = "Espanso.Espanso"; location = "$utils\suites\espanso"; scope = "user"}
         @{ name = "qBittorrent-Enhanced-Edition"; id = "c0re100.qBittorrent-Enhanced-Edition"; custom = "/D=$net\file-sharing\qbittorrent";}
-        @{ name = "JetBrainsMonoNerdFont"; id = "DEVCOM.JetBrainsMonoNerdFont"; scope = "user"}
-        @{ name = "7zip"; id = "7zip.7zip"; location = "$util\file\7zip";}
-        @{ name = "winrar"; id = "RARLab.WinRAR"; location = "$util\file\winrar";}
-        @{ name = "VSCodium"; id = "VSCodium.VSCodium"; location = "$doc\editors\vscodium";}
+        @{ name = "JetBrainsMonoNerdFont"; id = "DEVCOM.JetBrainsMonoNerdFont"; scope = "none"}
+        @{ name = "7zip"; id = "7zip.7zip"; location = "$utils\files\7zip";}
+        @{ name = "winrar"; id = "RARLab.WinRAR"; location = "$utils\files\winrar";}
+        @{ name = "VSCodium"; id = "VSCodium.VSCodium"; location = "$docs\editors\vscodium";}
         @{ name = "firefox"; id = "Mozilla.Firefox"; location = "$net\browsers\firefox";}
-        @{ name = "zeal"; id = "OlegShparber.Zeal"; custom = "INSTALL_ROOT=$coding\doc\zeal";}
-        @{ name = "Flameshot"; id = "Flameshot.Flameshot"; custom = "INSTALL_ROOT=$util\ime\flameshot"; }
+        @{ name = "zeal"; id = "OlegShparber.Zeal"; custom = "INSTALL_ROOT=$coding\docs\zeal";}
+        @{ name = "Flameshot"; id = "Flameshot.Flameshot"; custom = "INSTALL_ROOT=$utils\ime\flameshot"; }
         @{ name = "cpu-z"; id = "CPUID.CPU-Z"; location = "$admin\profilers\cpu-z"}
         @{ name = "gimp"; id = "GIMP.GIMP"; location = "$media\graphics\gimp"}
         @{ name = "sigil"; id = "Sigil-Ebook.Sigil"; location = "$docs\ebooks\sigil"}
         @{ name = "texstudio"; id = "TeXstudio.TeXstudio"; location = "$docs\editors\texstudio"}
-        @{ name = "git"; id = "Microsoft.Git"; location = "$coding\vcs\git"; custom = "/COMPONENTS=gitlfs,assoc,assoc_sh,windowsterminal,scalar"}
-        @{ name = "Neovim"; id = "Neovim.Neovim"; custom = "INSTALL_ROOT=$doc\editors\neovim"}
-        @{ name = "Gpg4win"; id = "GnuPG.Gpg4win"; location = "O:\secu\gpg4win"}
+        # @{ name = "git"; id = "Microsoft.Git"; location = "$coding\vcs\git"; custom = "/COMPONENTS=gitlfs,assoc,assoc_sh,windowsterminal,scalar"}
+        @{ name = "Neovim"; id = "Neovim.Neovim"; custom = "INSTALL_ROOT=$docs\editors\neovim"}
         @{ name = "Keepassxc"; id = "KeePassXCTeam.KeePassXC"; custom = "INSTALL_ROOT=$secu\passwd\keepassxc";}
         @{ name = "crystalDiskInfo"; id = "CrystalDewWorld.CrystalDiskInfo.AoiEdition"; location = "$admin\disk\crystal-disk-info"; }
-        @{ name = "drawio"; id = "JGraph.Draw"; location = "$doc\editors\drwaio"; }
-        @{ name = "fluent-reader"; id = "yang991178.fluent-reader"; location = "$doc\office\fluent-reader";}
-        @{ name = "obsidian"; id = "Obsidian.Obsidian"; location = "$doc\editors\obsidian";}
-        @{ name = "thunderbird"; id = "Mozilla.Thunderbird.zh-CN"; location = "$net\comm\thunderbird"; }
-        @{ name = "calibre"; id = "calibre.calibre"; location = "$doc\ebooks\calibre"; }
+        @{ name = "drawio"; id = "JGraph.Draw"; location = "$docs\editors\drwaio"; }
+        # Obsidian Plugins: Dateview,Advanced Tables,Calendar,Iconize Editor Syntax Highlight Emoji Toolbar,Paste URL into selection,Editing Toolbar,Obsidian Memos Easy Typing
+        @{ name = "obsidian"; id = "Obsidian.Obsidian"; location = "$docs\editors\obsidian";}
+        @{ name = "thunderbird"; id = "Mozilla.Thunderbird"; location = "$net\comm\thunderbird"; }
+        @{ name = "calibre"; id = "calibre.calibre"; location = "$docs\ebooks\calibre"; }
         @{ name = "picard"; id = "MusicBrainz.Picard"; location = "$media\audio\picard"; }
         @{ name = "obs-studio"; id = "OBSProject.OBSStudio"; location = "$media\video\obs-studio"; }
         @{ name = "yac-reader"; id = "YACReader.YACReader"; location = "$media\graphics\yac-reader"; }
         @{ name = "digiKam"; id = "KDE.digiKam"; location = "$media\graphics\digikam"; }
         @{ name = "ImageMagick"; id = "ImageMagick.ImageMagick"; location = "$media\graphics\image-magick"; }
-        @{ name = "Steam"; id = "Valve.Steam"; custom = "/D=$game\platforms\steam"; }
-        @{ name = "Playnite"; id = "Playnite.Playnite"; location = "$game\manager\playnite"; scope = "user"}
-        @{  name = "android-studio";
-            id = "Google.AndroidStudio";
-            custom = """/S /LOG=$coding\ides\android-studio\install.log /CONFIG=$HOME\dotfiles\misc\jetbrains\silent.config /D=$coding\ides\android-studio"""
-            install_mode = "n"
-        }
+        @{ name = "Steam"; id = "Valve.Steam"; custom = "/D=$games\platforms\steam"; }
+
         @{  name         = "idea-ic";
             id           = "JetBrains.IntelliJIDEA.Community";
-            custom       = """/S /LOG=$coding\ides\idea-ic\install.log /CONFIG=$HOME\dotfiles\misc\jetbrains\silent.config /D=$coding\ides\idea-ic"""; 
+            custom       = """/S /LOG=$coding\ides\idea-ic\install.log /CONFIG=$HOME\silent.config /D=$coding\ides\idea-ic"""; 
             install_mode = "n"
         }
         @{  name         = "pycharm-pc";
             id           = "JetBrains.PyCharm.Community";
-            custom       = """/S /LOG=$coding\ides\pycharm\install.log /CONFIG=$HOME\dotfiles\misc\jetbrains\silent.config /D=$coding\ides\pycharm"""
+            custom       = """/S /LOG=$coding\ides\pycharm\install.log /CONFIG=$HOME\silent.config /D=$coding\ides\pycharm"""
             install_mode = "n"
         }
 
         # not perfect,need interactive
         @{ name = "NVM"; id = "CoreyButler.NVMforWindows"; location = "$coding\vcs\nvm"; scope = "user"; install_mode = "i";}
-        @{ name = "KDEConnect"; id = "KDE.KDEConnect"; custom = "/D=$net\file-sharing\sync\kde-connect"; install_mode = "i";}
-        @{ name = "WindowsSDK"; id = "Microsoft.WindowsSDK.10.0.18362"; install_mode = "i";}
-        @{ name = "Weasel"; id = "Rime.Weasel"; custom = "INSTALL_ROOT=$util\ime\weasel"; install_mode = "i";}
-        @{ name = "PowerShell"; id = "Microsoft.PowerShell"; custom = "TARGETDIR=$util\shells\pwsh"; install_mode = "i";}
-        @{ name = "Powertoys"; id = "Microsoft.PowerToys"; custom = "TARGETDIR=$util\suites\powertoys";}
-        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; install_mode = "i";}
+        @{ name = "KDEConnect"; id = "KDE.KDEConnect"; custom = "/D=$net\sync\kde-connect"; install_mode = "i";}
+        @{ name = "PowerShell"; id = "Microsoft.PowerShell"; custom = "TARGETDIR=$utils\shells\pwsh"; install_mode = "i";}
         @{ name = "qq"; id = "Tencent.QQ.NT"; location = "$net\comm\qq"; install_mode = "i";}
-        @{ name = "wechat"; id = "Tencent.WeChat"; location = "$net\comm\wechat"; install_mode = "i";}
+
         @{ name = "potplayer"; id = "Daum.PotPlayer"; custom = "/D=$media\video\potplayer"; install_mode = "i";}
         @{ name = "python"; id = "Python.Python.3.12"; location = "$coding\sdks\python"; install_mode = "i";}
-        @{ name = "deployment-toolkit"; id = "Microsoft.DeploymentToolkit"; custom = "TARGETDIR=$coding\builds\windows-deploy-toolkit"; install_mode = "i";}
         
         # not support 'install location'
         @{ name = "ungoogled-chromium"; id = "eloston.ungoogled-chromium";}
         @{ name = "Dotnet8"; id = "Microsoft.DotNet.SDK.8"; scope = "none"}
         @{ name = "Autohotkey"; id = "AutoHotkey.AutoHotkey";}
         @{ name = "OhMyPosh"; id = "JanDeDobbeleer.OhMyPosh";}
-        @{ name = "WindowsTerminal"; id = "Microsoft.WindowsTerminal";}
-        @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$media\graphics\ffmpeg";}
+        @{ name = "WindowsTerminal"; id = "Microsoft.WindowsTerminal"; scope = "none"; install_mode = "n"}
+        @{ name = "GnuPG"; id = "GnuPG.GnuPG"; location = "$secu\gpg"}
         
-        # optional if you uninstall edge,maybe need install Microsoft.EdgeWebView2Runtime
+        # optional
+        # @{ name = "deployment-toolkit"; id = "Microsoft.DeploymentToolkit"; custom = "TARGETDIR=$coding\builds\windows-deploy-toolkit"; install_mode = "i";}
+        # @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$media\graphics\ffmpeg";}
+        # @{ name = "Weasel"; id = "Rime.Weasel"; custom = "INSTALL_ROOT=$utils\ime\weasel"; install_mode = "i";}
+        # @{ name = "Powertoys"; id = "Microsoft.PowerToys"; custom = "TARGETDIR=$utils\suites\powertoys";}
+        # @{ name = "WindowsSDK"; id = "Microsoft.WindowsSDK.10.0.18362"; install_mode = "i";}
+        # @{ name = "Playnite"; id = "Playnite.Playnite"; location = "$games\platforms\playnite"; scope = "user"}
+        # @{ name = "fluent-reader"; id = "yang991178.fluent-reader"; location = "$docs\office\fluent-reader";}
+        # @{ name = "wechat"; id = "Tencent.WeChat"; location = "$net\comm\wechat"; install_mode = "i";} # 安装哈希不匹配
 
     )
 
@@ -257,12 +242,12 @@ function install_dependencies {
     foreach ($pkg in $dependices) {
         try {
             if (is_installed $pkg.id) {
-                Write-Host "[1] [$($pkg.name)] already install" -ForegroundColor Yellow
+                Write-Host "[$($pkg.name)] already install" -ForegroundColor Yellow
                 continue
             }
             else {
                 $missing_pkgs += $pkg
-                Write-Host "[0] [$($pkg.name)] not install" -ForegroundColor Red
+                Write-Host "[$($pkg.name)] not install" -ForegroundColor Red
             }
         
         }
@@ -454,15 +439,14 @@ function backup_existing_config {
 
     # Firefox management
     if ($global:try_firefox -eq "y") {
-        $profiles_dir = "$env:APPDATA\Mozilla\Firefox\Profiles"
-        $firefox_profile = Join-Path $profiles_dir (Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release")
+        $firefox_profile = Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release"
         # Backup of Firefox components
         if (Test-Path -Path $firefox_profile) {
             backup_item "${firefox_profile}\chrome" "chrome" Container
             backup_item "${firefox_profile}\user.js" "user.js" Leaf
         }
         else {
-            Write-Host "Firefox profile not found, please start firefox." -ForegroundColor Yellow
+            Write-Host "Firefox profile not found, please checkt it." -ForegroundColor Yellow
         }
     }
 
@@ -470,7 +454,6 @@ function backup_existing_config {
     $single_files = @(
         @{ name = "Microsoft.PowerShell_profile(internally).ps1"; path = $windows_powershell_profile; type = "Leaf"}
         @{ name = "Microsoft.PowerShell_profile.ps1"; path = $pwsh_profile; type = "Leaf"}
-        @{ name = "espanso"; path = "$env:AppData\espanso"; type = "Container"}
         @{ name = "winterminal-settings.json"; path = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"; type = "Leaf"}
     )
     foreach ($item in $single_files) {
@@ -495,7 +478,6 @@ function install_dotfiles {
         "$HOME\.local\share",
         "$HOME\Documents\PowerShell",
         "$HOME\Documents\WindowsPowerShell",
-        "$env:APPDATA\espanso",
         "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState"
     )
     foreach ($item in $required_dirs) {
@@ -538,11 +520,6 @@ function install_dotfiles {
         @{name = "startup-page"; source = "$HOME\dotfiles\misc\startup-page"; target = "$HOME\.local\share"}
         @{name = "windows-powershell"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $pwsh_profile}
         @{name = "windows-powershell(internally)"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $windows_powershell_profile}
-        @{name = "espanso";
-        source = Get-ChildItem -Path "$HOME\dotfiles\home\espanso" -Directory | Select-Object -ExpandProperty FullName;
-        target = "$env:APPDATA\espanso";
-        type = "Container"
-    }
         @{name = "windows-terminal"; source = "$HOME\dotfiles\home\windows-terminal\settings.json"; target = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"}
     )
     foreach ($item in $home_files) {
@@ -559,8 +536,7 @@ function install_dotfiles {
 
     # Handle Firefox theme
     if ($global:try_firefox -eq "y") {
-        $profiles_dir = "$env:APPDATA\Mozilla\Firefox\Profiles"
-        $firefox_profile = Join-Path $profiles_dir (Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release")
+        $firefox_profile = Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release"
         $firefox_source = Get-ChildItem -Path "$HOME\dotfiles\misc\firefox" | Select-Object -ExpandProperty FullName
         # Copy content from firefox/
         if (Test-Path -Path $firefox_profile -PathType Container) {
@@ -572,6 +548,17 @@ function install_dotfiles {
 
         }
         # Update settings
+        $user_js = "$firefox_profile\user.js"
+        $startup_cfg = "$HOME\.local\share\startup-page\config.js"
+        
+        if (Test-Path -Path $user_js) {
+            (Get-Content $user_js) -replace "C:/Users/morynth", "C:/Users/$env:USERNAME" | Set-Content $user_js *> $ERROR_LOG 
+            Write-Host "Firefox config updated!" -ForegroundColor Green
+        }
+        if (Test-Path -Path $startup_cfg) {
+            (Get-Content $startup_cfg) -replace "name: 'morynth'", "name: '$env:USERNAME'" | Set-Content $startup_cfg *> $ERROR_LOG
+            Write-Host "Startup page updated!" -ForegroundColor Green
+        }
     }
     Write-Host "Dotfiles installed successfully!" -ForegroundColor Green
     Start-Sleep 3

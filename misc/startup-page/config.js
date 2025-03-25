@@ -11,7 +11,7 @@ const CONFIG = {
 	// └─┘┴ ┴└─┘┴└─┘└─┘
 
 	// General
-	name: 'gh0stzk',
+	name: 'morynth',
 	imageBackground: false,
 	openInNewTab: true,
 	twelveHourFormat: true,
