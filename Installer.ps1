@@ -24,6 +24,17 @@ $windows_powershell_profile = "$HOME\Documents\WindowsPowerShell\Microsoft.Power
 $profiles_dir = "$env:APPDATA\Mozilla\Firefox\Profiles"
 
 
+$soft_disk = "O:"
+$utils = Join-Path -Path $soft_disk -ChildPath "utils"
+$desktop = Join-Path -Path $soft_disk -ChildPath "desktop"
+$coding = Join-Path -Path $soft_disk -ChildPath "coding"
+$docs = Join-Path -Path $soft_disk -ChildPath "docs"
+$admin = Join-Path -Path $soft_disk -ChildPath "admin"
+$net = Join-Path -Path $soft_disk -ChildPath "net"
+$media = Join-Path -Path $soft_disk -ChildPath "media"
+$secu = Join-Path -Path $soft_disk -ChildPath "secu"
+$games = Join-Path -Path $soft_disk -ChildPath "games"
+
 function switch_ustc_mirrors {
 
     winget source remove winget
@@ -95,14 +106,13 @@ function initial_checks {
         exit 1
     }
 
-    if (-not (Test-Connection -TargetName 8.8.8.8 -Quiet) ) {
+    if (-not (Test-Connection 8.8.8.8 -Quiet) ) {
         Write-Host "No internet connection detected." -ForegroundColor Red
         exit 1
     }
 
-    $TargetDrive = "O:"
-    if (-not (Test-Path $TargetDrive)) {
-        Write-Host "Software Disk $TargetDrive not found." -ForegroundColor Red
+    if (-not (Test-Path $soft_disk)) {
+        Write-Host "Software Disk $soft_disk not found." -ForegroundColor Red
         exit 1
     }
 
@@ -116,8 +126,8 @@ function initial_checks {
 function add_env {
     $envVariables = @(
         @{ name = "GLAZEWM_CONFIG_PATH"; value = "$HOME\.config\glazewm\glazewm.yaml"; scope = "Machine" }
-        @{ name = "ChocolateyInstall"; value = "O:\admin\app_managers\chocolatey"; scope = "Machine" }
-        @{ name = "ChocolateyToolsLocation"; value = "O:\admin\app_managers\chocolatey\tools"; scope = "Machine" }
+        @{ name = "ChocolateyInstall"; value = "O:\admin\app-managers\chocolatey"; scope = "Machine" }
+        @{ name = "ChocolateyToolsLocation"; value = "O:\admin\app-managers\chocolatey\tools"; scope = "Machine" }
     )
     
     foreach ($var in $envVariables) {
@@ -140,16 +150,7 @@ function install_dependencies {
     logo "Installing needed packages.."
     Start-Sleep 2
 
-    $soft_disk = "O:"
-    $utils = Join-Path -Path $soft_disk -ChildPath "utils"
-    $desktop = Join-Path -Path $soft_disk -ChildPath "desktop"
-    $coding = Join-Path -Path $soft_disk -ChildPath "coding"
-    $docs = Join-Path -Path $soft_disk -ChildPath "docs"
-    $admin = Join-Path -Path $soft_disk -ChildPath "admin"
-    $net = Join-Path -Path $soft_disk -ChildPath "net"
-    $media = Join-Path -Path $soft_disk -ChildPath "media"
-    $secu = Join-Path -Path $soft_disk -ChildPath "secu"
-    $games = Join-Path -Path $soft_disk -ChildPath "games"
+
     # "TARGETDIR" "INSTALL_ROOT" "DESTINATION" "INSTALLDIR" "APPLICATIONFOLDE" "INSTALLLOCATION"
     $dependices = @(
 
@@ -230,7 +231,7 @@ function install_dependencies {
         param (
             [string]$id
         )
-        winget list -e --id $id *> $ERROR_LOG
+        winget list -e --id $id *> $null
         return $LASTEXITCODE -eq 0
     }
 
@@ -287,7 +288,7 @@ function install_dependencies {
                     }
                 }
                 else {
-                    # 默认静默安装
+                    # Default silent install
                     $wingetArgs += "-h"
                 }
                 if ($pkg.location) { $wingetArgs += @("-l", "`"$($pkg.location)`"") }
@@ -306,7 +307,7 @@ function install_dependencies {
                     }
                 }
                 else {
-                    # 默认全局安装
+                    # Default global install
                     $wingetArgs += @("--scope", "machine") 
                 }
     
@@ -318,7 +319,7 @@ function install_dependencies {
                 Write-Host "Installing [$($pkg.name)]" -ForegroundColor Cyan
                 # winget $install_cmd
                 # Invoke-Expression $install_cmd
-                Start-Process "winget" -ArgumentList $wingetArgs -Wait -NoNewWindow | Out-Null
+                Start-Process "winget" -ArgumentList $wingetArgs -Wait -NoNewWindow >> $ERROR_LOG
 
             }
             catch {
@@ -347,12 +348,12 @@ function clone_dotfiles {
         Write-Host "Existing repository found - renaming to: ${backup_dir}"
     
         try {
-            Move-Item -Path $repo_dir -Destination $backup_dir -ErrorAction Stop
+            Move-Item -Path $repo_dir -Destination $backup_dir -ErrorAction Stop >> $ERROR_LOG
             
         }
         catch {
             Write-Host "ERROR: - $($_.Exception.Message)"
-            Write-Host "Renaming failed! CheckInstallError.log"
+            Write-Host "Renaming failed!"
             exit 1
         }
         Write-Host "Repository successfully renamed for backup"
@@ -362,7 +363,7 @@ function clone_dotfiles {
     # Clone new repository
     Write-Host "Cloning dotfiles from: ${repo_url}"
     
-    git clone --depth 1 "$repo_url" "$repo_dir" *>> $ERROR_LOG
+    git clone --depth 1 "$repo_url" "$repo_dir" >> $ERROR_LOG
     if ($LASTEXITCODE -eq 0) {
         Write-Host "Dotfiles cloned successfully!"
     }
@@ -398,7 +399,7 @@ function backup_existing_config {
         }
     } while ($cleanAnswer -notin 'y', 'n')
 
-    New-Item -Path $backup_folder -ItemType Directory -Force *> $ERROR_LOG
+    New-Item -Path $backup_folder -ItemType Directory -Force *>> $ERROR_LOG
     Write-Host "Backup directory: $backup_folder"
 
     Start-Sleep 1
@@ -412,7 +413,7 @@ function backup_existing_config {
         $base_name = $target
         $dst = Join-Path -Path $backup_folder -ChildPath "${target}_${date}"
         if (Test-Path $source -PathType $type) {
-            Move-Item -Path $source -Destination $dst -ErrorAction Stop *> $ERROR_LOG
+            Move-Item -Path $source -Destination $dst -ErrorAction Stop >> $ERROR_LOG
             if ($?) {
                 Write-Host "${base_name} backup successful" -ForegroundColor Green
             }
@@ -439,15 +440,28 @@ function backup_existing_config {
 
     # Firefox management
     if ($global:try_firefox -eq "y") {
-        $firefox_profile = Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release"
-        # Backup of Firefox components
-        if (Test-Path -Path $firefox_profile) {
-            backup_item "${firefox_profile}\chrome" "chrome" Container
-            backup_item "${firefox_profile}\user.js" "user.js" Leaf
+            if (-not (Test-Path "$env:APPDATA\Mozilla")){
+                Write-Host "Creating Firefox profile..." -ForegroundColor Yellow
+                $firefox_process = Start-Process "$net\browsers\firefox\firefox.exe" -ArgumentList "--headless", "--display=0" -WindowStyle Hidden -PassThru 2> $null
+                Start-Sleep 2
+                if (-not $firefox_process.HasExited) {
+                    Stop-Process -Id $firefox_process.Id -Force -ErrorAction Stop
+                    Write-Host "Stop firefox process"
+                }
+                Start-Sleep 2
+            }   
+        try {
+            # Backup of Firefox components
+            $firefox_profile = Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release" 2> $null
+            if (Test-Path -Path $firefox_profile) {
+                backup_item "${firefox_profile}\chrome" "chrome" Container
+                backup_item "${firefox_profile}\user.js" "user.js" Leaf
+            }
         }
-        else {
-            Write-Host "Firefox profile not found, please checkt it." -ForegroundColor Yellow
+        catch {
+            Write-Host "Firefox profile not found." -ForegroundColor Yellow
         }
+
     }
 
     # Backup of individual files
@@ -482,7 +496,7 @@ function install_dotfiles {
     )
     foreach ($item in $required_dirs) {
         if (-not (Test-Path -Path $item -PathType Container) ) {
-            New-Item -Path $item -ItemType Directory *> $ERROR_LOG
+            New-Item -Path $item -ItemType Directory 2>> $ERROR_LOG
             Write-Host "Created directory: $item" -ForegroundColor Green
         }
     }
@@ -495,7 +509,7 @@ function install_dotfiles {
             [string]$target
         )
 
-        Copy-Item -Path $source -Destination $target -Recurse -Force *>> $ERROR_LOG 
+        Copy-Item -Path $source -Destination $target -Recurse -Force 2>> $ERROR_LOG 
         if ($?) {
             Write-Host "${name} copied successfully!" -ForegroundColor Yellow
         }
@@ -536,8 +550,8 @@ function install_dotfiles {
 
     # Handle Firefox theme
     if ($global:try_firefox -eq "y") {
-        $firefox_profile = Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release"
-        $firefox_source = Get-ChildItem -Path "$HOME\dotfiles\misc\firefox" | Select-Object -ExpandProperty FullName
+        $firefox_profile = Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release" 2> $null
+        $firefox_source = Get-ChildItem -Path "$HOME\dotfiles\misc\firefox" | Select-Object -ExpandProperty FullName 2> $null
         # Copy content from firefox/
         if (Test-Path -Path $firefox_profile -PathType Container) {
             foreach ($item in $firefox_source) {
@@ -552,11 +566,11 @@ function install_dotfiles {
         $startup_cfg = "$HOME\.local\share\startup-page\config.js"
         
         if (Test-Path -Path $user_js) {
-            (Get-Content $user_js) -replace "C:/Users/morynth", "C:/Users/$env:USERNAME" | Set-Content $user_js *> $ERROR_LOG 
+            (Get-Content $user_js) -replace "C:/Users/morynth", "C:/Users/$env:USERNAME" | Set-Content $user_js 2>> $ERROR_LOG 
             Write-Host "Firefox config updated!" -ForegroundColor Green
         }
         if (Test-Path -Path $startup_cfg) {
-            (Get-Content $startup_cfg) -replace "name: 'morynth'", "name: '$env:USERNAME'" | Set-Content $startup_cfg *> $ERROR_LOG
+            (Get-Content $startup_cfg) -replace "name: 'morynth'", "name: '$env:USERNAME'" | Set-Content $startup_cfg 2>> $ERROR_LOG
             Write-Host "Startup page updated!" -ForegroundColor Green
         }
     }
@@ -572,28 +586,20 @@ function configure_startup {
     Start-Sleep 2
     function create_shortcut {
         param (
-            # 文件路径
             [string]$source
         )
-        # 启动目录
         $startupDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::Startup)
 
         if (-not (Test-Path $source -PathType Leaf)) {
             Write-Host "$item not found"
             exit 1
         }
-        # 启动文件
         $filename = [System.IO.Path]::GetFileNameWithoutExtension($item)
         $shortcut_file = (Join-Path $startupDir $filename) + ".lnk"
 
-        # 创建lnk快捷方式
-        New-Item -ItemType SymbolicLink -Path $shortcut_file -Target $item *> $ERROR_LOG
+        New-Item -ItemType SymbolicLink -Path $shortcut_file -Target $item *>> $ERROR_LOG
 
-        # $WScriptShell = New-Object -ComObject WScript.Shell
-        # $shortcut = $WScriptShell.Createshortcut($shortcut_file)
-        # $shortcut.TargetPath = $item
-        # $shortcut.Save()
-        Write-Host "$filename shortcurt enabled successfully!"
+        Write-Host "Add $filename shortcurt to startup successfully!"
         
     }
 
