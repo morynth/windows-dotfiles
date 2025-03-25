@@ -8,17 +8,13 @@
 #enter::Run "wt"
 
 !F2::Run "Taskmgr"
-!+b::Run "O:\internet\browsers\firefox\firefox.exe"
-+e::Run "O:\documents\editors\vscodium\VSCodium"
+!+b::Run "O:\net\browsers\firefox\firefox.exe"
++e::Run "O:\docs\editors\vscodium\VSCodium"
 +f::Run "explorer"
 
-; Terminal apps (yazi, musikcube, musicfox)
-!+y::Run "pwsh -c yazi H:\molin\"
-+m::Run "pwsh -c musikcube"
-+l::Run "pwsh -c musicfox"
-
-; Media apps (Pavucontrol, Telegram, Whatsapp)
-+t::Run "telegram"
+; Terminal apps (musikcube, musicfox)
+!+m::Run "pwsh -c musikcube"
+!+l::Run "pwsh -c musicfox"
 
 ;Reload Keybindings
 #Esc::Reload
