@@ -30,13 +30,16 @@
     {
         "defaults": 
         {
-            "elevate": true
+            "elevate": true,
+            "font": 
+            {
+                "face": "JetBrainsMonoNL Nerd Font Propo"
+            }
         },
         "list": 
         [
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-                "elevate": true,
                 "experimental.retroTerminalEffect": false,
                 "experimental.rightClickContextMenu": true,
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
@@ -67,7 +70,7 @@
                 "antialiasingMode": "grayscale",
                 "closeOnExit": "automatic",
                 "colorScheme": "Tango Dark",
-                "commandline": "O:\\desktop\\pwsh\\7\\pwsh.exe",
+                "commandline": "O:\\utils\\shells\\pwsh\\7\\pwsh.exe",
                 "cursorShape": "bar",
                 "elevate": true,
                 "font": 
