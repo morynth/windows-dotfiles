@@ -1,5 +1,3 @@
-
-
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/tokyonight_storm.omp.json" | Invoke-Expression
 # theme: spaceship,json,star,tokyonight_storm,zash,atomic
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete 
@@ -7,21 +5,21 @@ Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
 Import-Module PSReadLine
+# Install posh-git: PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 Import-Module posh-git
-# Import-Module microsoft.powershell.localaccounts -UseWindowsPowerShell
 
-function y {
-    $tmp = [System.IO.Path]::GetTempFileName()
-    yazi $args --cwd-file="$tmp"
-    $cwd = Get-Content -Path $tmp
-    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
-        Set-Location -LiteralPath $cwd
+function save_terminal_profile {
+    try {
+        $terminal_profile_path = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+        $target = "$HOME\Documents\settings.json"
+        Copy-Item -Path $terminal_profile_path -Destination $target -Force
+
     }
-    Remove-Item -Path $tmp
-}
+    catch {
+        Write-Host "Save failed"
+    }
+    Write-Host "Successfully saved to the document"
 
-function backup_terminal_profile {
-    
 }
 
 # Winget Tab
@@ -44,5 +42,5 @@ New-Alias -Name vi -Value nvim
 # See https://ch0.co/tab-completion for details.
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
+    Import-Module "$ChocolateyProfile"
 }
