@@ -169,7 +169,7 @@ function install_dependencies {
         @{ name = "Zeal"; id = "OlegShparber.Zeal"; custom = "INSTALL_ROOT=$coding\docs\zeal";}
         @{ name = "Flameshot"; id = "Flameshot.Flameshot"; custom = "INSTALL_ROOT=$utils\ime\flameshot"; }
         @{ name = "CPU-Z"; id = "CPUID.CPU-Z"; location = "$admin\profilers\cpu-z"}
-        @{ name = "Gimp"; id = "GIMP.GIMP"; location = "$media\graphics\gimp"}
+        @{ name = "Gimp"; id = "GIMP.GIMP.3"; location = "$media\graphics\gimp"}
         @{ name = "Sigil"; id = "Sigil-Ebook.Sigil"; location = "$docs\ebooks\sigil"}
         @{ name = "TeXstudio"; id = "TeXstudio.TeXstudio"; location = "$docs\editors\texstudio"}
         # @{ name = "git"; id = "Microsoft.Git"; location = "$coding\vcs\git"; custom = "/COMPONENTS=gitlfs,assoc,assoc_sh,windowsterminal,scalar"}
@@ -379,6 +379,29 @@ function clone_dotfiles {
 
 }
 
+function stop_specific_processes {
+    param (
+        [Parameter(Mandatory=$false)]
+        [string[]]$process_list = @("AutoHotkey64", "yasb")
+    )
+
+    Write-Host "Stop ${process_list} processes"
+    foreach ($name in $process_list) {
+        # Remove .exe suffix
+        $process_name = $name -replace '\.exe$', ''
+        
+        $process = Get-Process -Name $process_name -ErrorAction SilentlyContinue
+        if ($process) {
+            Write-Host "Stoping: $process_name..."
+            Stop-Process -Name $process_name -Force
+            Write-Host "Already stopped: $process_name"
+        } else {
+            Write-Host "Not running: $process_name"
+        }
+    }
+}
+
+
 function backup_existing_config {
     Clear-Host
     logo "Backup files"
@@ -472,7 +495,7 @@ function backup_existing_config {
         @{ name = "Microsoft.PowerShell_profile(internally).ps1"; path = $windows_powershell_profile; type = "Leaf"}
         @{ name = "Microsoft.PowerShell_profile.ps1"; path = $pwsh_profile; type = "Leaf"}
         @{ name = "winterminal-settings.json"; path = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"; type = "Leaf"}
-    )
+        )
     foreach ($item in $single_files) {
         backup_item $item.path $item.name $item.type
     }
@@ -495,7 +518,8 @@ function install_dotfiles {
         "$HOME\.local\share",
         "$HOME\Documents\PowerShell",
         "$HOME\Documents\WindowsPowerShell",
-        "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState"
+        "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState",
+        "$HOME\Documents\PowerToys\Backup"
     )
     foreach ($item in $required_dirs) {
         if (-not (Test-Path -Path $item -PathType Container) ) {
@@ -538,16 +562,11 @@ function install_dotfiles {
         @{name = "windows-powershell"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $pwsh_profile}
         @{name = "windows-powershell(internally)"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $windows_powershell_profile}
         @{name = "windows-terminal"; source = "$HOME\dotfiles\home\windows-terminal\settings.json"; target = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"}
-    )
+        @{name = "powertoys"; source = "$HOME\dotfiles\home\powertoys\*"; target = "$HOME\Documents\PowerToys\Backup"}
+
+        )
     foreach ($item in $home_files) {
-        if ($item.type -eq "Container") {
-            foreach ($single in $item.source) {
-                $child_name = Join-Path $item.name (Split-Path $single -Leaf)
-                copy_files $child_name $single $item.target
-            }
-        }else{
-            copy_files $item.name $item.source $item.target
-        }
+        copy_files $item.name $item.source $item.target
         Start-Sleep 1
     }
 
@@ -620,12 +639,13 @@ function configure_startup {
 }
 
 
-# initial_checks
-# welcome
+initial_checks
+welcome
 
-# install_dependencies
+install_dependencies
 # clone_dotfiles
 
-# backup_existing_config
-# install_dotfiles
+stop_specific_processes
+backup_existing_config
+install_dotfiles
 configure_startup
