@@ -119,18 +119,25 @@ workspaces:
 
 
 window_rules:
+  - commands: ["move --workspace 2"]
+    match:
+      - window_process: { regex: "explorer" }
   - commands: ["move --workspace 3"]
     match:
-      - window_process: { regex: "chrome|firefox|KeePassXC" }
+      - window_process: { regex: "chrome|firefox" }
+  - commands: ["move --workspace 4"]
+    match:
+      - window_process: { regex: "thunderbird|Telegram|WeChat|QQ" }
+  - commands: ["move --workspace 5"]
+    match:
+      - window_process: { regex: "qbittorrent|IDMan" }
+  - commands: ["move --workspace 6"]
+    match:
+      - window_process: { regex: "KeePassXC|clash-verge" }
   - commands: ["set-floating"]
     match:
       - window_process: { regex: "QQ|musikcube|wegame|LeagueClientUx|WindowsTerminal|Taskmgr|pycharm64" }
-  - commands: ["set-floating"]
-    match:
-      - window_class: { regex: "TVPMainWindow" }
-  - commands: ["move --workspace 6"]
-    match:
-      - window_process: { regex: "thunderbird|Telegram" }
+      - window_class: { regex: "TVPMainWindow" } 
   - commands: ['ignore']
     match:
       # Ignores any Zebar windows.

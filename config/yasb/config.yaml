@@ -32,8 +32,8 @@ bars:
       right: 6
     widgets:
       left: ["glazewm_workspaces","glazewm_tiling_direction","active_window"]
-      center: ["clock","apps"]
-      right: ["cava","ai","wallpapers","github","taskbar","weather","whkd","volume","power_menu"]
+      center: ["clock","taskbar"]
+      right: ["cava","wallpapers","github","taskbar","weather","volume","power_menu"]
 widgets:
   # update:
   #   type: "yasb.update_check.UpdateCheckWidget"
@@ -167,7 +167,7 @@ widgets:
     options:
       label: "<span>\ueba1</span>"
       label_alt: "Notifications {data}"
-      token: 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
+      token: env
       max_notification: 30
       only_unread: false
       max_field_size: 54
@@ -203,7 +203,7 @@ widgets:
     type: "yasb.wallpapers.WallpapersWidget"
     options:
       label: "<span>\udb83\ude09</span>"
-      image_path: "C:\\molin\\Pictures\\Wallpapers"
+      image_path: "H:\\morynth\\Pictures\\Wallpapers"
       change_automatically: false
       update_interval: 60
       gallery:
@@ -239,3 +239,50 @@ widgets:
         left: 8
         bottom: 0
         right: 8
+  pomodoro:
+    type: "yasb.pomodoro.PomodoroWidget"
+    options:
+      label: "<span>\uf252</span> {remaining}"
+      label_alt: "<span>{icon}</span> {session}/{total_sessions} - {status}"
+      work_duration: 25
+      break_duration: 5
+      long_break_duration: 15
+      long_break_interval: 4
+      auto_start_breaks: true
+      auto_start_work: true
+      sound_notification: true
+      show_notification: true
+      hide_on_break: false
+      session_target: 8
+      icons:
+        work: "\uf252"
+        break: "\uf253"
+        paused: "\uf254"
+      container_padding:
+        top: 0
+        left: 12
+        bottom: 0
+        right: 12
+      menu:
+        blur: true
+        round_corners: true
+        round_corners_type: "normal"
+        border_color: "System"
+        alignment: "right"
+        direction: "down"
+        offset_top: 6
+        offset_left: 0
+        circle_background_color: "#09ffffff"
+        circle_work_progress_color: "#88c0d0"
+        circle_break_progress_color: "#a3be8c"
+        circle_thickness: 8
+        circle_size: 160
+  traffic:
+    type: "yasb.traffic.TrafficWidget"
+    options:
+      label: "\ueb01 \ueab4 {download_speed} | \ueab7 {upload_speed}"
+      label_alt: "Download {download_speed} | Upload {upload_speed}"
+      update_interval: 1000
+      callbacks:
+        on_left: "toggle_label"
+        on_right: "exec cmd /c Taskmgr"
