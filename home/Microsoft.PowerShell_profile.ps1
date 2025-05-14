@@ -8,6 +8,25 @@ Import-Module PSReadLine
 # Install posh-git: PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 Import-Module posh-git
 
+function create_shortcut {
+    param (
+        [string]$source
+    )
+    $startupDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::Startup)
+
+    if (-not (Test-Path $source -PathType Leaf)) {
+        Write-Host "$source not found"
+        exit 1
+    }
+    $filename = [System.IO.Path]::GetFileNameWithoutExtension($source)
+    $shortcut_file = (Join-Path $startupDir $filename) + ".lnk"
+
+    New-Item -ItemType SymbolicLink -Path $shortcut_file -Target $source *>> $ERROR_LOG
+
+    Write-Host "Add $filename shortcurt to startup successfully!"
+    
+}
+
 function batch_convert_to_webp {
     param(
         [Parameter(Mandatory = $true, Position = 0)]

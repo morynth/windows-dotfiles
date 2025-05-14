@@ -129,7 +129,7 @@ function add_env {
         @{ name = "GLAZEWM_CONFIG_PATH"; value = "$HOME\.config\glazewm\config.yaml"; scope = "Machine" }
         @{ name = "ChocolateyInstall"; value = "O:\admin\app-managers\chocolatey"; scope = "Machine" }
         @{ name = "ChocolateyToolsLocation"; value = "O:\admin\app-managers\chocolatey\tools"; scope = "Machine" }
-        )
+    )
     
     foreach ($var in $envVariables) {
         try {
@@ -156,29 +156,29 @@ function install_dependencies {
     $dependices = @(
 
         # ok
-        @{ name = "yasb"; id = "AmN.yasb"; location = "$desktop\yasb"; scope = "none"}
-        @{ name = "Flow-Launcher"; id = "Flow-Launcher.Flow-Launcher"; scope = "none"}
-        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; install_mode = "i";}
-        @{ name = "Espanso"; id = "Espanso.Espanso"; location = "$utils\suites\espanso"; scope = "user"}
-        @{ name = "qBittorrent-Enhanced-Edition"; id = "c0re100.qBittorrent-Enhanced-Edition"; custom = "/D=$net\file-sharing\qbittorrent";}
-        @{ name = "JetBrainsMonoNerdFont"; id = "DEVCOM.JetBrainsMonoNerdFont"; scope = "none"}
-        @{ name = "7zip"; id = "7zip.7zip"; location = "$utils\files\7zip";}
-        @{ name = "WinRAR"; id = "RARLab.WinRAR"; location = "$utils\files\winrar";}
-        @{ name = "VSCodium"; id = "VSCodium.VSCodium"; location = "$docs\editors\vscodium";}
-        @{ name = "Firefox"; id = "Mozilla.Firefox"; location = "$net\browsers\firefox";}
-        @{ name = "Zeal"; id = "OlegShparber.Zeal"; custom = "INSTALL_ROOT=$coding\docs\zeal";}
+        @{ name = "yasb"; id = "AmN.yasb"; location = "$desktop\yasb"; scope = "none" }
+        @{ name = "Flow-Launcher"; id = "Flow-Launcher.Flow-Launcher"; scope = "none" }
+        @{ name = "glazewm"; id = "glzr-io.glazewm"; location = "$desktop\glazewm"; install_mode = "i"; }
+        @{ name = "Espanso"; id = "Espanso.Espanso"; location = "$utils\suites\espanso"; scope = "user" }
+        @{ name = "qBittorrent-Enhanced-Edition"; id = "c0re100.qBittorrent-Enhanced-Edition"; custom = "/D=$net\file-sharing\qbittorrent"; }
+        @{ name = "JetBrainsMonoNerdFont"; id = "DEVCOM.JetBrainsMonoNerdFont"; scope = "none" }
+        @{ name = "7zip"; id = "7zip.7zip"; location = "$utils\files\7zip"; }
+        @{ name = "WinRAR"; id = "RARLab.WinRAR"; location = "$utils\files\winrar"; }
+        @{ name = "VSCodium"; id = "VSCodium.VSCodium"; location = "$docs\editors\vscodium"; }
+        @{ name = "Firefox"; id = "Mozilla.Firefox"; location = "$net\browsers\firefox"; }
+        @{ name = "Zeal"; id = "OlegShparber.Zeal"; custom = "INSTALL_ROOT=$coding\docs\zeal"; }
         @{ name = "Flameshot"; id = "Flameshot.Flameshot"; custom = "INSTALL_ROOT=$utils\ime\flameshot"; }
-        @{ name = "CPU-Z"; id = "CPUID.CPU-Z"; location = "$admin\profilers\cpu-z"}
-        @{ name = "Gimp"; id = "GIMP.GIMP.3"; location = "$media\graphics\gimp"}
-        @{ name = "Sigil"; id = "Sigil-Ebook.Sigil"; location = "$docs\ebooks\sigil"}
-        @{ name = "TeXstudio"; id = "TeXstudio.TeXstudio"; location = "$docs\editors\texstudio"}
+        @{ name = "CPU-Z"; id = "CPUID.CPU-Z"; location = "$admin\profilers\cpu-z" }
+        @{ name = "Gimp"; id = "GIMP.GIMP.3"; location = "$media\graphics\gimp" }
+        @{ name = "Sigil"; id = "Sigil-Ebook.Sigil"; location = "$docs\ebooks\sigil" }
+        @{ name = "TeXstudio"; id = "TeXstudio.TeXstudio"; location = "$docs\editors\texstudio" }
         # @{ name = "git"; id = "Microsoft.Git"; location = "$coding\vcs\git"; custom = "/COMPONENTS=gitlfs,assoc,assoc_sh,windowsterminal,scalar"}
-        @{ name = "Neovim"; id = "Neovim.Neovim"; custom = "INSTALL_ROOT=$docs\editors\neovim"}
-        @{ name = "Keepassxc"; id = "KeePassXCTeam.KeePassXC"; custom = "INSTALL_ROOT=$secu\passwd\keepassxc";}
+        @{ name = "Neovim"; id = "Neovim.Neovim"; custom = "INSTALL_ROOT=$docs\editors\neovim" }
+        @{ name = "Keepassxc"; id = "KeePassXCTeam.KeePassXC"; custom = "INSTALL_ROOT=$secu\passwd\keepassxc"; }
         @{ name = "CrystalDiskInfo"; id = "CrystalDewWorld.CrystalDiskInfo.AoiEdition"; location = "$admin\disk\crystal-disk-info"; }
         @{ name = "Drawio"; id = "JGraph.Draw"; location = "$docs\editors\drwaio"; }
         # Obsidian Plugins: Dateview,Advanced Tables,Calendar,Iconize Editor Syntax Highlight Emoji Toolbar,Paste URL into selection,Editing Toolbar,Obsidian Memos Easy Typing
-        @{ name = "Obsidian"; id = "Obsidian.Obsidian"; location = "$docs\editors\obsidian";}
+        @{ name = "Obsidian"; id = "Obsidian.Obsidian"; location = "$docs\editors\obsidian"; }
         @{ name = "Thunderbird"; id = "Mozilla.Thunderbird"; location = "$net\comm\thunderbird"; }
         @{ name = "calibre"; id = "calibre.calibre"; location = "$docs\ebooks\calibre"; }
         @{ name = "Picard"; id = "MusicBrainz.Picard"; location = "$media\audio\picard"; }
@@ -197,27 +197,27 @@ function install_dependencies {
             custom       = """/S /LOG=$coding\ides\pycharm\install.log /CONFIG=$HOME\silent.config /D=$coding\ides\pycharm"""
             install_mode = "n"
         }
-        @{ name = "GnuCash"; id = "GnuCash.GnuCash"; location = "$finance\gnucash";}
-        @{ name = "Musicfox"; id = "go-musicfox.go-musicfox"; location = "$media\audio\musicfox";}
-        @{ name = "cava"; id = "karlstav.cava"; location = "$desktop\cava";}
+        @{ name = "GnuCash"; id = "GnuCash.GnuCash"; location = "$finance\gnucash"; }
+        @{ name = "Musicfox"; id = "go-musicfox.go-musicfox"; location = "$media\audio\musicfox"; }
+        @{ name = "cava"; id = "karlstav.cava"; location = "$desktop\cava"; }
 
         # not perfect,need interactive
-        @{ name = "NVM"; id = "CoreyButler.NVMforWindows"; location = "$coding\vcs\nvm"; scope = "user"; install_mode = "i";}
-        @{ name = "KDEConnect"; id = "KDE.KDEConnect"; custom = "/D=$net\sync\kde-connect"; install_mode = "i";}
-        @{ name = "PowerShell"; id = "Microsoft.PowerShell"; custom = "TARGETDIR=$utils\shells\pwsh"; install_mode = "i";}
-        @{ name = "QQ"; id = "Tencent.QQ.NT"; location = "$net\comm\qq"; install_mode = "i";}
-        @{ name = "PotPlayer"; id = "Daum.PotPlayer"; custom = "/D=$media\video\potplayer"; install_mode = "i";}
-        @{ name = "Python"; id = "Python.Python.3.12"; location = "$coding\sdks\python"; install_mode = "i";}
-        @{ name = "InternetDownloadManager"; id = "Tonec.InternetDownloadManager"; location = "$net\file-sharing\idm"; install_mode = "i";}
-        @{ name = "Powertoys"; id = "Microsoft.PowerToys"; custom = "TARGETDIR=$utils\suites\powertoys"; install_mode = "i";}
+        @{ name = "NVM"; id = "CoreyButler.NVMforWindows"; location = "$coding\vcs\nvm"; scope = "user"; install_mode = "i"; }
+        @{ name = "KDEConnect"; id = "KDE.KDEConnect"; custom = "/D=$net\sync\kde-connect"; install_mode = "i"; }
+        @{ name = "PowerShell"; id = "Microsoft.PowerShell"; custom = "TARGETDIR=$utils\shells\pwsh"; install_mode = "i"; }
+        @{ name = "QQ"; id = "Tencent.QQ.NT"; location = "$net\comm\qq"; install_mode = "i"; }
+        @{ name = "PotPlayer"; id = "Daum.PotPlayer"; custom = "/D=$media\video\potplayer"; install_mode = "i"; }
+        @{ name = "Python"; id = "Python.Python.3.12"; location = "$coding\sdks\python"; install_mode = "i"; }
+        @{ name = "InternetDownloadManager"; id = "Tonec.InternetDownloadManager"; location = "$net\file-sharing\idm"; install_mode = "i"; }
+        @{ name = "Powertoys"; id = "Microsoft.PowerToys"; custom = "TARGETDIR=$utils\suites\powertoys"; install_mode = "i"; }
         
         # not support 'install location'
-        @{ name = "ungoogled-chromium"; id = "eloston.ungoogled-chromium";}
-        @{ name = "Dotnet8"; id = "Microsoft.DotNet.SDK.8"; scope = "none"}
-        @{ name = "Autohotkey"; id = "AutoHotkey.AutoHotkey";}
-        @{ name = "OhMyPosh"; id = "JanDeDobbeleer.OhMyPosh";}
-        @{ name = "WindowsTerminal"; id = "Microsoft.WindowsTerminal"; scope = "none"; install_mode = "n"}
-        @{ name = "GnuPG"; id = "GnuPG.GnuPG"; location = "$secu\gpg"}
+        @{ name = "ungoogled-chromium"; id = "eloston.ungoogled-chromium"; }
+        @{ name = "Dotnet8"; id = "Microsoft.DotNet.SDK.8"; scope = "none" }
+        @{ name = "Autohotkey"; id = "AutoHotkey.AutoHotkey"; }
+        @{ name = "OhMyPosh"; id = "JanDeDobbeleer.OhMyPosh"; }
+        @{ name = "WindowsTerminal"; id = "Microsoft.WindowsTerminal"; scope = "none"; install_mode = "n" }
+        @{ name = "GnuPG"; id = "GnuPG.GnuPG"; location = "$secu\gpg" }
 
         # optional
         # @{ name = "deployment-toolkit"; id = "Microsoft.DeploymentToolkit"; custom = "TARGETDIR=$coding\builds\windows-deploy-toolkit"; install_mode = "i";}
@@ -381,7 +381,7 @@ function clone_dotfiles {
 
 function stop_specific_processes {
     param (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string[]]$process_list = @("AutoHotkey64", "yasb")
     )
 
@@ -395,7 +395,8 @@ function stop_specific_processes {
             Write-Host "Stoping: $process_name..."
             Stop-Process -Name $process_name -Force
             Write-Host "Already stopped: $process_name"
-        } else {
+        }
+        else {
             Write-Host "Not running: $process_name"
         }
     }
@@ -466,16 +467,16 @@ function backup_existing_config {
 
     # Firefox management
     if ($global:try_firefox -eq "y") {
-            if (-not (Test-Path "$env:APPDATA\Mozilla")){
-                Write-Host "Creating Firefox profile..." -ForegroundColor Yellow
-                $firefox_process = Start-Process "$net\browsers\firefox\firefox.exe" -ArgumentList "--headless", "--display=0" -WindowStyle Hidden -PassThru 2> $null
-                Start-Sleep 2
-                if (-not $firefox_process.HasExited) {
-                    Stop-Process -Id $firefox_process.Id -Force -ErrorAction Stop
-                    Write-Host "Stop firefox process"
-                }
-                Start-Sleep 2
-            }   
+        if (-not (Test-Path "$env:APPDATA\Mozilla")) {
+            Write-Host "Creating Firefox profile..." -ForegroundColor Yellow
+            $firefox_process = Start-Process "$net\browsers\firefox\firefox.exe" -ArgumentList "--headless", "--display=0" -WindowStyle Hidden -PassThru 2> $null
+            Start-Sleep 2
+            if (-not $firefox_process.HasExited) {
+                Stop-Process -Id $firefox_process.Id -Force -ErrorAction Stop
+                Write-Host "Stop firefox process"
+            }
+            Start-Sleep 2
+        }   
         try {
             # Backup of Firefox components
             $firefox_profile = Get-ChildItem -Path $profiles_dir -Directory -Filter "*.default-release" 2> $null
@@ -492,10 +493,10 @@ function backup_existing_config {
 
     # Backup of individual files
     $single_files = @(
-        @{ name = "Microsoft.PowerShell_profile(internally).ps1"; path = $windows_powershell_profile; type = "Leaf"}
-        @{ name = "Microsoft.PowerShell_profile.ps1"; path = $pwsh_profile; type = "Leaf"}
-        @{ name = "winterminal-settings.json"; path = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"; type = "Leaf"}
-        )
+        @{ name = "Microsoft.PowerShell_profile(internally).ps1"; path = $windows_powershell_profile; type = "Leaf" }
+        @{ name = "Microsoft.PowerShell_profile.ps1"; path = $pwsh_profile; type = "Leaf" }
+        @{ name = "winterminal-settings.json"; path = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"; type = "Leaf" }
+    )
     foreach ($item in $single_files) {
         backup_item $item.path $item.name $item.type
     }
@@ -558,13 +559,13 @@ function install_dotfiles {
 
     # Copy miscellaneous components and remaining files
     $home_files = @(
-        @{name = "startup-page"; source = "$HOME\dotfiles\misc\startup-page"; target = "$HOME\.local\share"}
-        @{name = "windows-powershell"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $pwsh_profile}
-        @{name = "windows-powershell(internally)"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $windows_powershell_profile}
-        @{name = "windows-terminal"; source = "$HOME\dotfiles\home\windows-terminal\settings.json"; target = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"}
-        @{name = "powertoys"; source = "$HOME\dotfiles\home\powertoys\*"; target = "$HOME\Documents\PowerToys\Backup"}
+        @{name = "startup-page"; source = "$HOME\dotfiles\misc\startup-page"; target = "$HOME\.local\share" }
+        @{name = "windows-powershell"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $pwsh_profile }
+        @{name = "windows-powershell(internally)"; source = "$HOME\dotfiles\home\Microsoft.PowerShell_profile.ps1"; target = $windows_powershell_profile }
+        @{name = "windows-terminal"; source = "$HOME\dotfiles\home\windows-terminal\settings.json"; target = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" }
+        @{name = "powertoys"; source = "$HOME\dotfiles\home\powertoys\*"; target = "$HOME\Documents\PowerToys\Backup" }
 
-        )
+    )
     foreach ($item in $home_files) {
         copy_files $item.name $item.source $item.target
         Start-Sleep 1
@@ -611,16 +612,16 @@ function configure_startup {
             [string]$source
         )
         $startupDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::Startup)
-
+    
         if (-not (Test-Path $source -PathType Leaf)) {
-            Write-Host "$item not found"
+            Write-Host "$source not found"
             exit 1
         }
-        $filename = [System.IO.Path]::GetFileNameWithoutExtension($item)
+        $filename = [System.IO.Path]::GetFileNameWithoutExtension($source)
         $shortcut_file = (Join-Path $startupDir $filename) + ".lnk"
-
-        New-Item -ItemType SymbolicLink -Path $shortcut_file -Target $item *>> $ERROR_LOG
-
+    
+        New-Item -ItemType SymbolicLink -Path $shortcut_file -Target $source *>> $ERROR_LOG
+    
         Write-Host "Add $filename shortcurt to startup successfully!"
         
     }
