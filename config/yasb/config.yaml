@@ -33,7 +33,7 @@ bars:
     widgets:
       left: ["glazewm_workspaces","glazewm_tiling_direction","active_window"]
       center: ["clock","taskbar"]
-      right: ["cava","wallpapers","github","taskbar","weather","volume","power_menu"]
+      right: ["cava","wallpapers","github","weather","volume","power_menu"]
 widgets:
   # update:
   #   type: "yasb.update_check.UpdateCheckWidget"
@@ -179,7 +179,7 @@ widgets:
         enabled: true
       icon_size: 16
       ignore_apps:
-        processes: []
+        processes: ["firefox.exe","chrome.exe"]
         titles: []
         classes: []
       container_padding:
@@ -195,16 +195,12 @@ widgets:
       class_name: "ai-widget"
       callbacks:
         on_left: "exec cmd.exe /c start \"C:\\Program Files\\Mozilla Firefox\\firefox.exe\" https://platform.openai.com/playground/chat?models=gpt-4o"
-  whkd:
-    type: "yasb.whkd.WhkdWidget"
-    options:
-      label: "<span>\uf11c</span>"
   wallpapers:
     type: "yasb.wallpapers.WallpapersWidget"
     options:
       label: "<span>\udb83\ude09</span>"
       image_path: "H:\\morynth\\Pictures\\Wallpapers"
-      change_automatically: false
+      change_automatically: true
       update_interval: 60
       gallery:
         enabled: true
