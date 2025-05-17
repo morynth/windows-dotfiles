@@ -200,6 +200,10 @@ function install_dependencies {
         @{ name = "GnuCash"; id = "GnuCash.GnuCash"; location = "$finance\gnucash"; }
         @{ name = "Musicfox"; id = "go-musicfox.go-musicfox"; location = "$media\audio\musicfox"; }
         @{ name = "cava"; id = "karlstav.cava"; location = "$desktop\cava"; }
+        @{ name = "scrcpy"; id = "Genymobile.scrcpy";}
+        # @{ name = "adb"; id = "Google.PlatformTools";}
+        @{ name = "everything"; id = "voidtools.Everything"; location = "$utils\files\everything";}
+        @{ name = "tree"; id = "GnuWin32.Tree"; location = "$utils\files\tree";}
 
         # not perfect,need interactive
         @{ name = "NVM"; id = "CoreyButler.NVMforWindows"; location = "$coding\vcs\nvm"; scope = "user"; install_mode = "i"; }
@@ -210,7 +214,8 @@ function install_dependencies {
         @{ name = "Python"; id = "Python.Python.3.12"; location = "$coding\sdks\python"; install_mode = "i"; }
         @{ name = "InternetDownloadManager"; id = "Tonec.InternetDownloadManager"; location = "$net\file-sharing\idm"; install_mode = "i"; }
         @{ name = "Powertoys"; id = "Microsoft.PowerToys"; custom = "TARGETDIR=$utils\suites\powertoys"; install_mode = "i"; }
-        
+        @{ name = "Microsoft-OpenJDK-21"; id = "Microsoft.OpenJDK.21"; location = "$coding\sdks\microsoft-openjdk-21"; install_mode = "i";}
+
         # not support 'install location'
         @{ name = "ungoogled-chromium"; id = "eloston.ungoogled-chromium"; }
         @{ name = "Dotnet8"; id = "Microsoft.DotNet.SDK.8"; scope = "none" }
@@ -223,7 +228,7 @@ function install_dependencies {
         # @{ name = "deployment-toolkit"; id = "Microsoft.DeploymentToolkit"; custom = "TARGETDIR=$coding\builds\windows-deploy-toolkit"; install_mode = "i";}
         # @{ name = "ffmpeg"; id = "Gyan.FFmpeg"; location = "$media\graphics\ffmpeg";}
         # @{ name = "Weasel"; id = "Rime.Weasel"; custom = "INSTALL_ROOT=$utils\ime\weasel"; install_mode = "i";}
-        # @{ name = "WindowsSDK"; id = "Microsoft.WindowsSDK.10.0.18362"; install_mode = "i";}
+        # @{ name = "WindowsSDK-10"; id = "Microsoft.WindowsSDK.10.0.19041"; install_mode = "i";}
         # @{ name = "Playnite"; id = "Playnite.Playnite"; location = "$games\platforms\playnite"; scope = "user"}
         # @{ name = "fluent-reader"; id = "yang991178.fluent-reader"; location = "$docs\office\fluent-reader";}
         # @{ name = "wechat"; id = "Tencent.WeChat"; location = "$net\comm\wechat"; install_mode = "i";} # 安装哈希不匹配
