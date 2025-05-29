@@ -70,7 +70,7 @@
                 "antialiasingMode": "grayscale",
                 "closeOnExit": "automatic",
                 "colorScheme": "Tango Dark",
-                "commandline": "O:\\utils\\shells\\pwsh\\7\\pwsh.exe",
+                "commandline": "O:\\util\\pwsh\\7\\pwsh.exe",
                 "cursorShape": "bar",
                 "elevate": true,
                 "font": 
